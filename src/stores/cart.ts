@@ -15,7 +15,7 @@ export const useCartStore = defineStore('cart', () => {
   const userStore = useUserStore()
   const initialState = localStorage.getItem('cartItems')
     ? JSON.parse(localStorage.getItem('cartItems') as string)
-    : null
+    : []
   const cartItems = ref<CartItems[]>(initialState)
   const address = computed(() => userStore.address)
   const userData = computed(() => userStore.userData)
@@ -23,7 +23,9 @@ export const useCartStore = defineStore('cart', () => {
   const prevOrderData = ref<Order>()
 
   const addItemToCart = (newItem: Product) => {
-    const existItem = cartItems.value.find((item) => item.name === newItem.name)
+    const existItem: CartItems | undefined = cartItems.value.find(
+      (item) => item.name === newItem.name
+    )
     if (existItem) {
       existItem.quantity++
     } else {
