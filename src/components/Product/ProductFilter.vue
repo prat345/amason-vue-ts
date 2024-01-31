@@ -16,13 +16,13 @@ watch(route, () => {
 })
 
 onMounted(async () => {
-  categories.value = await getCategories()
+  categories.value = (await getCategories()) as string[]
 })
 </script>
 
 <template>
   <main class="py-8">
-    <div class="flex flex-col gap-y-6">
+    <div class="flex flex-row justify-between gap-y-6 md:flex-col">
       <div>
         <h3>Category</h3>
         <ul>
@@ -40,7 +40,7 @@ onMounted(async () => {
           <router-link
             :to="{ name: 'Home', query: { ...queryParams, price: price.value } }"
             v-for="price in prices"
-            :key="price"
+            :key="price.name"
             ><li>{{ price.name }}</li>
           </router-link>
         </ul>
@@ -51,7 +51,7 @@ onMounted(async () => {
           <router-link
             :to="{ name: 'Home', query: { ...queryParams, rating: rating.rating } }"
             v-for="rating in ratings"
-            :key="rating"
+            :key="rating.name"
             ><li>{{ rating.name }}</li>
           </router-link>
         </ul>
@@ -61,7 +61,16 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+a {
+  @apply text-teal-700;
+}
+a:hover {
+  @apply text-orange-700;
+}
 h3 {
-  @apply text-lg font-semibold;
+  @apply mb-1 text-base font-semibold;
+}
+ul li {
+  @apply mb-1 font-light;
 }
 </style>

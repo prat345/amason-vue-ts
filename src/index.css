@@ -6,25 +6,19 @@
   box-sizing: border-box;
 }
 
-body {
-  background-color: rgb(249, 243, 235);
-}
-
 img {
   @apply inline-block h-full;
 }
-a:hover {
-  @apply text-orange-700;
-}
+
 .button {
   @apply rounded-md border bg-stone-300 px-3 py-1;
 }
 h1.title {
-  @apply mb-3 text-4xl font-semibold text-slate-800;
+  @apply mb-3 text-4xl font-semibold capitalize text-slate-800;
 }
 
 @layer utilities {
   .container {
-    @apply mx-auto;
+    @apply mx-auto px-4;
   }
 }

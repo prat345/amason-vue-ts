@@ -1,23 +1,8 @@
 <script lang="ts" setup>
 import { useCartStore } from '@/stores/cart'
 import { computed, onMounted } from 'vue'
-import { ref } from 'vue'
-import { parseDateString } from '@/utils/parseDateString'
+import { formatDate } from '@/utils/formatDate'
 
-const data = [
-  {
-    key: '1',
-    name: 'Mike',
-    age: 32,
-    address: '10 Downing Street'
-  },
-  {
-    key: '2',
-    name: 'John',
-    age: 42,
-    address: '10 Downing Street'
-  }
-]
 const columns = [
   {
     title: 'Order ID',
@@ -69,7 +54,7 @@ const orderHistory = computed(() => cartStore.orderHistory)
         </template>
         <template v-else-if="column.key === 'createdAt'">
           <span>
-            <a>{{ parseDateString(record.createdAt) }}</a>
+            <a>{{ formatDate(new Date(record.createdAt)) }}</a>
           </span>
         </template>
         <template v-else-if="column.key === 'action'">

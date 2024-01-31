@@ -1,3 +1,5 @@
+import type { CartItems } from '@/stores/cart'
+
 export interface Product {
   name: string
   slug: string
@@ -11,18 +13,25 @@ export interface Product {
   numReviews: number
 }
 
-export interface OrderHistory {
+export interface Order {
   _id: string
   createdAt: string
   isDelivered: boolean
   isPaid: boolean
   itemsPrice: number
-  orderItems: Product[]
+  orderItems: CartItems[]
   paymentMethod: string
-  shippingAddress: Object
+  shippingAddress: Address
   shippingPrice: number
   taxPrice: number
   totalPrice: number
   updatedAt: string
   user: string
+}
+export interface Address {
+  fullName: string
+  address: string
+  city: string
+  postalCode: string
+  country: string
 }

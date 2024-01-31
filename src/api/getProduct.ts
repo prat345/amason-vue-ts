@@ -11,8 +11,8 @@ interface SearchProducts {
 }
 export interface QueryParams {
   category: string
-  price: String
-  rating: String
+  price: string
+  rating: string
   query: string
 }
 

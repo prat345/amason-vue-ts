@@ -1,17 +1,15 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { getProducts, getProduct } from '@/api/getProduct'
 import type { Product } from '@/api/types'
-import { useRoute, useRouter } from 'vue-router'
-import type { QueryParams } from '@/api/getProduct'
+import { useRouter } from 'vue-router'
 import { useUserStore } from './user'
-import axios from 'axios'
-import type { OrderHistory } from '@/api/types'
+import type { Order } from '@/api/types'
+import { placeOrder, getOrderHistory, getOrderData } from '@/api/order'
 
-interface CartItems extends Product {
+export interface CartItems extends Product {
   quantity: number
 }
-const baseUrl = import.meta.env.VITE_SERVER_API
+
 export const useCartStore = defineStore('cart', () => {
   const router = useRouter()
   const userStore = useUserStore()
@@ -21,7 +19,8 @@ export const useCartStore = defineStore('cart', () => {
   const cartItems = ref<CartItems[]>(initialState)
   const address = computed(() => userStore.address)
   const userData = computed(() => userStore.userData)
-  const orderHistory = ref<OrderHistory[]>([])
+  const orderHistory = ref<Order[]>()
+  const prevOrderData = ref<Order>()
 
   const addItemToCart = (newItem: Product) => {
     const existItem = cartItems.value.find((item) => item.name === newItem.name)
@@ -55,42 +54,30 @@ export const useCartStore = defineStore('cart', () => {
   const handlePlaceOrder = async () => {
     console.log('place order')
     console.log(`Bearer ${userData.value?.token}`)
-    try {
-      const { data } = await axios.post(
-        `${baseUrl}/api/orders`,
-        {
-          orderItems: cartItems.value,
-          shippingAddress: address.value,
-          paymentMethod: 'paypal',
-          itemsPrice: totalItemsPrice.value,
-          shippingPrice: shippingFee.value,
-          taxPrice: TaxFee.value,
-          totalPrice: totalPurchasedPrice.value
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${userData.value?.token}`
-          }
-        }
-      )
-      console.log('Order created', data)
-      router.push({ name: 'OrderSummary', params: { orderId: data._id } })
-    } catch (error) {
-      console.log((error as Error).message)
+    const orderData = {
+      orderItems: cartItems.value,
+      shippingAddress: address.value,
+      paymentMethod: 'paypal',
+      itemsPrice: totalItemsPrice.value,
+      shippingPrice: shippingFee.value,
+      taxPrice: TaxFee.value,
+      totalPrice: totalPurchasedPrice.value
     }
+    const token = userData.value?.token as string
+    const data = await placeOrder(orderData, token)
+
+    console.log('Order created', data)
+    router.push({ name: 'OrderSummary', params: { orderId: data._id } })
   }
 
   const fetchOrderHistory = async () => {
-    try {
-      const { data } = await axios.get(`${baseUrl}/api/orders/history`, {
-        headers: {
-          Authorization: `Bearer ${userData.value?.token}`
-        }
-      })
-      orderHistory.value = data
-    } catch (error) {
-      console.log((error as Error).message)
-    }
+    const data = await getOrderHistory(userData.value?.token as string)
+    orderHistory.value = data
+  }
+
+  const fetchOrderData = async (orderId: string) => {
+    const data = await getOrderData(orderId, userData.value?.token as string)
+    prevOrderData.value = data
   }
 
   // getter
@@ -108,12 +95,14 @@ export const useCartStore = defineStore('cart', () => {
     cartItems,
     countCartItems,
     orderHistory,
+    prevOrderData,
     addItemToCart,
     decreaseQuantity,
     increaseQuantity,
     removeItemFromCart,
     handlePlaceOrder,
     fetchOrderHistory,
+    fetchOrderData,
     totalItemsPrice,
     totalPurchasedPrice,
     shippingFee

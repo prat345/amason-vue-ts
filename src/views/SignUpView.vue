@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import { useUserStore } from '@/stores/user'
-import type { FormData } from '@/stores/user'
+import type { FormData } from '@/api/user'
+import SmallContainerSlot from '../components/Shared/SmallContainerSlot.vue'
 
 const userStore = useUserStore()
 const formData = reactive<FormData>({
@@ -21,9 +22,11 @@ const onFinishFailed = (errorInfo: any) => {
 
 <template>
   <main class="py-8">
-    <div class="flex items-center justify-center">
-      <div class="wrapper w-full bg-white px-10 py-6">
+    <small-container-slot>
+      <template v-slot:title>
         <h1 class="title text-center">Sign Up</h1>
+      </template>
+      <template v-slot:content>
         <a-form
           :model="formData"
           name="basic"
@@ -66,13 +69,9 @@ const onFinishFailed = (errorInfo: any) => {
         <router-link :to="{ name: 'Signin' }" class="block text-center"
           >Already have an account? Sign In</router-link
         >
-      </div>
-    </div>
+      </template>
+    </small-container-slot>
   </main>
 </template>
 
-<style scoped>
-.wrapper {
-  max-width: 400px;
-}
-</style>
+<style scoped></style>

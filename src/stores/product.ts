@@ -1,6 +1,6 @@
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { getProducts, getProduct } from '@/api/getProduct'
+import { getProducts } from '@/api/getProduct'
 import type { Product } from '@/api/types'
 import { useRoute } from 'vue-router'
 import type { QueryParams } from '@/api/getProduct'
@@ -35,10 +35,6 @@ export const useProductStore = defineStore('product', () => {
     }
   })
 
-  // const handleQueryChange = () => {
-  //   queryParams.value = { ...route.query }
-  //   fetchProducts()
-  // }
   const clearQuery = () => {
     queryParams.value = {}
     fetchProducts()
